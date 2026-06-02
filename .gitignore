@@ -1,12 +1,12 @@
-# Sistema operacional
+# sistema
 .DS_Store
 Thumbs.db
 
-# Dependências
+# dependencias
 /vendor/
 /node_modules/
 
-# Ambiente e Logs
+# ambiente e logs
 .env
 *.log
 *.tmp
