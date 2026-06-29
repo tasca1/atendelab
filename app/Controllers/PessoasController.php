@@ -14,7 +14,7 @@ class PessoasController
     public function listar(): void
     {
         header('Content-Type: application/json; charset=utf-8');
-        $sql = 'SELECT id, nome, documento, telefone, curso, periodo, status FROM pessoas ORDER BY id DESC';
+        $sql = 'SELECT id, nome, documento, telefone, email, curso, periodo, status FROM pessoas ORDER BY id DESC';
         $stmt = $this->pdo->query($sql);
         $pessoas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
@@ -32,7 +32,7 @@ class PessoasController
             return;
         }
 
-        $sql = 'SELECT id, nome, documento, telefone, curso, periodo, status FROM pessoas WHERE id = :id';
+        $sql = 'SELECT id, nome, documento, telefone, email, curso, periodo, status FROM pessoas WHERE id = :id';
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -55,22 +55,30 @@ class PessoasController
         $nome = trim($_POST['nome'] ?? '');
         $documento = trim($_POST['documento'] ?? '');
         $telefone = trim($_POST['telefone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
         $curso = trim($_POST['curso'] ?? '');
         $periodo = trim($_POST['periodo'] ?? '');
         $status = $_POST['status'] ?? 'ativo';
 
-        if ($nome === '' || $documento === '') {
+        if ($nome === '' || $documento === '' || $email === '') {
             http_response_code(400);
-            echo json_encode(['erro' => 'Nome e documento são obrigatórios.']);
+            echo json_encode(['erro' => 'Nome, documento e e-mail são obrigatórios.']);
+            return;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Informe um e-mail válido.']);
             return;
         }
 
         try {
-            $sql = 'INSERT INTO pessoas (nome, documento, telefone, curso, periodo, status) VALUES (:nome, :documento, :telefone, :curso, :periodo, :status)';
+            $sql = 'INSERT INTO pessoas (nome, documento, telefone, email, curso, periodo, status) VALUES (:nome, :documento, :telefone, :email, :curso, :periodo, :status)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':nome', $nome);
             $stmt->bindValue(':documento', $documento);
             $stmt->bindValue(':telefone', $telefone);
+            $stmt->bindValue(':email', $email);
             $stmt->bindValue(':curso', $curso);
             $stmt->bindValue(':periodo', $periodo);
             $stmt->bindValue(':status', $status);
@@ -83,7 +91,6 @@ class PessoasController
             ], JSON_UNESCAPED_UNICODE);
         } catch (PDOException $e) {
             http_response_code(500);
-            // Verifica se o erro é de documento duplicado
             if ($e->getCode() == 23000) {
                 echo json_encode(['erro' => 'Já existe uma pessoa cadastrada com este documento.']);
             } else {
@@ -100,22 +107,30 @@ class PessoasController
         $nome = trim($_POST['nome'] ?? '');
         $documento = trim($_POST['documento'] ?? '');
         $telefone = trim($_POST['telefone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
         $curso = trim($_POST['curso'] ?? '');
         $periodo = trim($_POST['periodo'] ?? '');
         $status = $_POST['status'] ?? 'ativo';
 
-        if (!$id || $nome === '' || $documento === '') {
+        if (!$id || $nome === '' || $documento === '' || $email === '') {
             http_response_code(400);
-            echo json_encode(['erro' => 'ID, nome e documento são obrigatórios.']);
+            echo json_encode(['erro' => 'ID, nome, documento e e-mail são obrigatórios.']);
+            return;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo json_encode(['erro' => 'Informe um e-mail válido.']);
             return;
         }
 
         try {
-            $sql = 'UPDATE pessoas SET nome = :nome, documento = :documento, telefone = :telefone, curso = :curso, periodo = :periodo, status = :status WHERE id = :id';
+            $sql = 'UPDATE pessoas SET nome = :nome, documento = :documento, telefone = :telefone, email = :email, curso = :curso, periodo = :periodo, status = :status WHERE id = :id';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindValue(':nome', $nome);
             $stmt->bindValue(':documento', $documento);
             $stmt->bindValue(':telefone', $telefone);
+            $stmt->bindValue(':email', $email);
             $stmt->bindValue(':curso', $curso);
             $stmt->bindValue(':periodo', $periodo);
             $stmt->bindValue(':status', $status);

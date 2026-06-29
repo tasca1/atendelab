@@ -57,12 +57,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         atendimentos: document.getElementById('totalAtendimentos')
     };
 
-    for (const [controller, element] of Object.entries(targets)) {
-        try {
-            // Usa o motor AtendeLabApi que criamos no JS para buscar as listas
-            const response = await AtendeLabApi.get(controller, 'listar');
-            element.textContent = AtendeLabApi.toList(response).length;
-        } catch (error) {
+    try {
+        const resumo = await AtendeLabApi.get('dashboard', 'resumo');
+        for (const [chave, element] of Object.entries(targets)) {
+            element.textContent = Number(resumo[chave] ?? 0);
+        }
+    } catch (error) {
+        for (const element of Object.values(targets)) {
             element.textContent = '!';
             element.title = error.message;
         }

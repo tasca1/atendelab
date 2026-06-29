@@ -4,7 +4,6 @@ class FrontendController
 {
     public function __construct()
     {
-        // Garante que nenhuma página visual seja aberta sem sessão ativa
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

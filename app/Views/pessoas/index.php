@@ -190,4 +190,4 @@ async function inativarPessoa(id) {
 document.addEventListener('DOMContentLoaded', carregarPessoas);
 </script>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>s
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
