@@ -23,11 +23,11 @@ require_once __DIR__ . '/../layouts/header.php';
                     <label class="form-label">Nome *</label>
                     <input class="form-control" name="nome" required>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3" maxlength="20">
                     <label class="form-label">Documento *</label>
                     <input class="form-control" name="documento" required>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3" maxlength="20">
                     <label class="form-label">Telefone</label>
                     <input class="form-control" name="telefone">
                 </div>
